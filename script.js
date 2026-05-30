@@ -663,33 +663,37 @@ window.addEventListener('DOMContentLoaded', () => {
     const authTitle = document.getElementById('authTitle');
     const authError = document.getElementById('authError');
     const submitBtn = document.getElementById('submitBtn');
+    const googleBtn = document.getElementById('googleBtn');
     const toggleLink = document.getElementById('toggleLink');
     const userStatus = document.getElementById('userStatus');
     const userEmail = document.getElementById('userEmail');
     const logoutBtn = document.getElementById('logoutBtn');
-    const googleBtn = document.getElementById('googleBtn');
     const saveBtn = document.getElementById('saveBtn');
     const loadBtn = document.getElementById('loadBtn');
-
-    if (window.location.protocol === 'file:') {
-        if (authError) authError.textContent = "ERROR: FIREBASE REQUIRES A LOCAL SERVER (LIVE SERVER)";
-        if (submitBtn) submitBtn.disabled = true;
-    }
 
     let isLoginMode = true;
     let currentUser = null;
 
+    if (window.location.protocol === 'file:') {
+        if (authError) authError.textContent = "ERROR: FIREBASE REQUIRES A LOCAL SERVER (LIVE SERVER)";
+        if (submitBtn) submitBtn.disabled = true;
+        if (googleBtn) googleBtn.disabled = true;
+    }
+
     if (googleBtn) {
-        googleBtn.addEventListener('click', async () => {
+        googleBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log("Google Login Attempt started...");
             try {
                 if (authError) authError.textContent = "";
                 googleBtn.disabled = true;
-                googleBtn.textContent = "WAIT...";
+                googleBtn.textContent = "LINKING...";
                 await loginWithGoogle();
+                console.log("Google Login Complete!");
             } catch (err) {
-                console.error("Google Auth error:", err);
-                const msg = err.code ? `[${err.code}] ${err.message}` : err.message;
-                if (authError) authError.textContent = msg.toUpperCase();
+                console.error("GOOGLE AUTH ERROR:", err);
+                const code = err.code ? `[${err.code}] ` : "";
+                if (authError) authError.textContent = (code + err.message).toUpperCase();
                 googleBtn.disabled = false;
                 googleBtn.textContent = "CONTINUE WITH GOOGLE";
             }
@@ -699,6 +703,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const handleAuthToggle = (e) => {
         if (e) e.preventDefault();
         isLoginMode = !isLoginMode;
+        console.log("Mode switched to:", isLoginMode ? "Login" : "Sign Up");
         if (authError) authError.textContent = "";
         
         authTitle.textContent = isLoginMode ? 'LOGIN' : 'SIGN UP';
@@ -721,6 +726,8 @@ window.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
 
+            console.log(`Submitting ${isLoginMode ? 'Login' : 'Sign Up'} for ${email}...`);
+
             try {
                 submitBtn.disabled = true;
                 submitBtn.textContent = "WAIT...";
@@ -728,10 +735,12 @@ window.addEventListener('DOMContentLoaded', () => {
                     await login(email, password);
                 } else {
                     await signUp(email, password);
+                    alert("Account Created! Welcome to the realm.");
                 }
             } catch (err) {
-                console.error("Auth error:", err);
-                if (authError) authError.textContent = err.message.toUpperCase();
+                console.error("AUTH ERROR:", err);
+                const code = err.code ? `[${err.code}] ` : "";
+                if (authError) authError.textContent = (code + err.message).toUpperCase();
                 submitBtn.disabled = false;
                 submitBtn.textContent = isLoginMode ? 'ENTER REALM' : 'JOIN ADVENTURE';
             }
@@ -748,16 +757,15 @@ window.addEventListener('DOMContentLoaded', () => {
             if (authOverlay) authOverlay.classList.add('hidden');
             if (userStatus) userStatus.classList.remove('hidden');
             if (userEmail) userEmail.textContent = user.email.split('@')[0].toUpperCase();
-            console.log("Logged in as:", user.email);
         } else {
             currentUser = null;
             if (authOverlay) authOverlay.classList.remove('hidden');
             if (userStatus) userStatus.classList.add('hidden');
             if (workspace) workspace.clear();
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = isLoginMode ? 'ENTER REALM' : 'JOIN ADVENTURE';
-            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = isLoginMode ? 'ENTER REALM' : 'JOIN ADVENTURE';
+            googleBtn.disabled = false;
+            googleBtn.textContent = "CONTINUE WITH GOOGLE";
         }
     });
 
