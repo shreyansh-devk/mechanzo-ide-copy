@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MechanzO Block IDE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Blockly CDN (Pinned Versions for Stability) -->
+    <script src="https://unpkg.com/blockly@10.4.3/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly@10.4.3/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly@10.4.3/javascript_compressed.js"></script>
+    <script src="https://unpkg.com/blockly@10.4.3/msg/en.js"></script>
+    
+    <!-- esptool-js (local bundle, ES module loaded dynamically in flash handler) -->
+</head>
+<body class="auth-required">
+    <div id="authOverlay">
+        <div class="auth-modal">
+            <h2 id="authTitle">LOGIN</h2>
+            <form class="auth-form" id="authForm">
+                <input type="email" id="authEmail" placeholder="EMAIL" required>
+                <input type="password" id="authPassword" placeholder="PASSWORD" required>
+                <div id="authError" style="color: var(--accent-red); font-size: 12px; margin-top: -8px; min-height: 14px; font-family: 'Share Tech Mono', monospace;"></div>
+                <button type="submit" class="auth-btn" id="submitBtn">ENTER REALM</button>
+                <div style="margin: 10px 0; color: var(--text-secondary); font-size: 12px;">OR</div>
+                <button type="button" class="auth-btn google-btn" id="googleBtn">CONTINUE WITH GOOGLE</button>
+            </form>
+            <div class="toggle-auth">
+                <span id="togglePreText">New explorer? </span><button id="toggleLink" style="background:none; border:none; color: var(--accent-gold); cursor: pointer; text-decoration: underline; padding:0; font-family: inherit; font-size: inherit;">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">MechanzO <span class="ide-tag">Block IDE</span></div>
+        <div class="header-right">
+            <div id="userStatus" class="hidden">
+                <span id="userEmail"></span>
+                <button id="logoutBtn">EXIT</button>
+            </div>
+            <button id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="blocklyWrapper">
+            <div id="blocklyDiv"></div>
+            <div id="emptyState">Drag the 'Start' block to begin</div>
+        </div>
+        <aside id="previewArea">
+            <div class="panel-header">
+                <div class="action-group">
+                    <button id="generateBtn">Generate Code</button>
+                    <button id="saveBtn">Save</button>
+                    <button id="loadBtn">Load</button>
+                    <button id="flashBtn">Flash</button>
+                </div>
+                <button id="copyBtn" title="Copy to clipboard">COPY</button>
+            </div>
+            <div id="flashStatus" class="status-text"></div>
+            <pre><code id="codeOutput" class="placeholder">// build your program to see code</code></pre>
+        </aside>
+    </main>
+
+    <!-- Toolbox Definition -->
+    <xml id="toolbox" style="display: none">
+        <category name="Control" colour="210">
+            <block type="mechanzo_start"></block>
+            <block type="mechanzo_repeat"></block>
+            <block type="mechanzo_delay"></block>
+            <block type="mechanzo_delay_s"></block>
+            <block type="mechanzo_if"></block>
+            <block type="mechanzo_if_else"></block>
+        </category>
+        <category name="Output" colour="30">
+            <block type="mechanzo_led"></block>
+            <block type="mechanzo_buzzer"></block>
+            <block type="mechanzo_oled_print"></block>
+            <block type="mechanzo_lcd_print"></block>
+            <block type="mechanzo_motor"></block>
+            <block type="mechanzo_servo"></block>
+        </category>
+        <category name="Input" colour="120">
+            <block type="mechanzo_switch_pressed"></block>
+            <block type="mechanzo_ir_sensor"></block>
+        </category>
+        <category name="Analog" colour="260">
+            <block type="mechanzo_read_analog"></block>
+        </category>
+        <category name="SENSORS" colour="180">
+            <block type="mechanzo_analog_sensor"></block>
+            <block type="mechanzo_digital_sensor"></block>
+            <block type="mechanzo_ultrasonic"></block>
+        </category>
+        <category name="Variables" colour="330">
+            <block type="mechanzo_var_declare"></block>
+            <block type="mechanzo_var_set"></block>
+            <block type="mechanzo_var_get"></block>
+        </category>
+        <category name="Logic" colour="160">
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+        </category>
+        <category name="Math" colour="230">
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+        </category>
+    </xml>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
