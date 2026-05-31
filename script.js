@@ -336,6 +336,8 @@ window.addEventListener('DOMContentLoaded', () => {
         globalDeclarations.add('Adafruit_SSD1306 oled(128, 64, &Wire, -1);');
         setupStatements.add('  Wire.begin(47, 48);');
         setupStatements.add('  oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);');
+        setupStatements.add('  oled.setTextSize(1);');
+        setupStatements.add('  oled.setTextColor(SSD1306_WHITE);');
         return `  oled.clearDisplay();\n  oled.setCursor(0, 0);\n  oled.println(${val});\n  oled.display();\n`;
     };
 
@@ -345,7 +347,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forBlock['mechanzo_ir_sensor'] = function(block) {
-        const pin = block.getFieldValue('PIN');
+        const pin = block.getFieldValue('PORT');
         setupStatements.add(`  pinMode(${pin}, INPUT_PULLUP);`);
         return [`(digitalRead(${pin}) == LOW)`, arduinoGenerator.ORDER_EQUALITY];
     };
